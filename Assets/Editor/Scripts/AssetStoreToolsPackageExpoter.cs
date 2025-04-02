@@ -24,7 +24,7 @@ public static class AssetStoreToolsPackageExpoter
         }
         else
         {
-            Debug.LogWarning($"以下のファイルをエキスポートしました。\n{string.Join('\n', assetPaths)}");
+            Debug.Log($"以下のファイルをエキスポートしました。\n{string.Join('\n', assetPaths)}");
         }
 
         //プロジェクトディレクトリ直下のパスを取得
