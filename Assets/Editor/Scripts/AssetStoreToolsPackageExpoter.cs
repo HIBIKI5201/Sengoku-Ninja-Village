@@ -5,6 +5,9 @@ using System.IO;
 
 namespace SengokuNinjaVillage.Editor
 {
+    /// <summary>
+    /// AssetStoreToolsのファイルをパッケージ化するシステム
+    /// </summary>
     public static class AssetStoreToolsPackageExpoter
     {
         private static string PackageName = "AssetStoreToolsPackage";
