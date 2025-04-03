@@ -1,0 +1,17 @@
+{
+    "name": "SengokuNinjaVillageSystem",
+    "rootNamespace": "SengokuNinjaVillage.System",
+    "references": [
+        "GUID:68a532f43eeefd5408e4e8871b769ee4",
+        "GUID:a4b9e426128515b49a84470275c7356d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
