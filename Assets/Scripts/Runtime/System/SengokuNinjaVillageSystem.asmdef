@@ -1,0 +1,18 @@
+{
+    "name": "SengokuNinjaVillageSystem",
+    "rootNamespace": "SengokuNinjaVillage.Runtime.System",
+    "references": [
+        "GUID:68a532f43eeefd5408e4e8871b769ee4",
+        "GUID:a4b9e426128515b49a84470275c7356d",
+        "GUID:f92f3690afc7dd64dbc8657388d7a56d"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
