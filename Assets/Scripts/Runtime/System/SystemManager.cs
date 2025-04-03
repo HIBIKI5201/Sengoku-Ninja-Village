@@ -40,7 +40,7 @@ namespace SengokuNinjaVillage.Runtime.System
             }
             catch (OperationCanceledException ex)
             {
-                Debug.Log("システムの初期化をキャンセル");
+                Debug.Log($"システムの初期化をキャンセル\n{ex}");
             }
 
             //初期化終了を記録

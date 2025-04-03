@@ -33,7 +33,7 @@ namespace SengokuNinjaVillage.Runtime.System
                     }
                 }
 
-                manager.SceneAwake();
+                await manager.SceneAwake();
             }
         }
     }
