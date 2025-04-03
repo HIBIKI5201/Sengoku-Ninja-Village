@@ -1,5 +1,6 @@
 ﻿using PlasticGui.WorkspaceWindow.PendingChanges;
 using SymphonyFrameWork.System;
+using System;
 using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
@@ -26,28 +27,30 @@ namespace SengokuNinjaVillage.Runtime.System
                     .ToArray();
             }
 
-            //Awakeを実行する
-            foreach (var c in _components)
+            //初期化を実行
+            try
             {
-                c?.ManagedAwake();
+                await Task.WhenAll(_components.Select(c => c.ManagedAwake()).ToArray());
+
+                await Awaitable.NextFrameAsync(destroyCancellationToken);
+
+                await SceneStart();
+
+                await Awaitable.NextFrameAsync(destroyCancellationToken);
+            }
+            catch (OperationCanceledException ex)
+            {
+                Debug.Log("システムの初期化をキャンセル");
             }
 
-            await Awaitable.NextFrameAsync(destroyCancellationToken);
-
-            await SceneStart();
-
-            await Awaitable.NextFrameAsync(destroyCancellationToken);
-
+            //初期化終了を記録
             _isInitialize = true;
         }
 
         public override async Task SceneStart()
         {
             //Startを実行する
-            foreach (var c in _components)
-            {
-                c?.ManagedStart();
-            }
+            await Task.WhenAll(_components.Select(c => c.ManagedStart()).ToArray());
         }
 
         private void Update()
