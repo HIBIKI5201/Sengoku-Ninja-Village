@@ -1,5 +1,8 @@
-﻿using SymphonyFrameWork.System;
+﻿using PlasticGui.WorkspaceWindow.PendingChanges;
+using SymphonyFrameWork.System;
 using System.Linq;
+using System.Threading.Tasks;
+using UnityEngine;
 
 namespace SengokuNinjaVillage.Runtime.System
 {
@@ -10,30 +13,52 @@ namespace SengokuNinjaVillage.Runtime.System
     {
         private ManagedComponent[] _components = default;
 
-        public override void SceneAwake()
+        private bool _isInitialize = false;
+
+        public override async Task SceneAwake()
         {
             //システムシーンのManagedComponentを取得する
             if (SceneLoader.GetExistScene(SceneListEnum.System.ToString(), out var scene))
             {
-                _components = scene.GetRootGameObjects().Select(go => go.GetComponent<ManagedComponent>()).ToArray();
+                _components = scene.GetRootGameObjects()
+                    .Select(go => go.GetComponent<ManagedComponent>())
+                    .Where(co => co)
+                    .ToArray();
             }
 
             //Awakeを実行する
             foreach (var c in _components)
             {
-                c.ManagedAwake();
+                c?.ManagedAwake();
             }
+
+            await Awaitable.NextFrameAsync(destroyCancellationToken);
+
+            await SceneStart();
+
+            await Awaitable.NextFrameAsync(destroyCancellationToken);
+
+            _isInitialize = true;
         }
 
-        public override void SceneStart()
+        public override async Task SceneStart()
         {
             //Startを実行する
             foreach (var c in _components)
             {
-                c.ManagedStart();
+                c?.ManagedStart();
             }
+        }
 
-            _components = null; //解放
+        private void Update()
+        {
+            if (!_isInitialize) return;
+
+            //Updateを実行する
+            foreach (var c in _components)
+            {
+                c?.ManagedUpdate();
+            }
         }
     }
 }
