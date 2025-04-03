@@ -1,12 +1,13 @@
-﻿using UnityEngine;
+﻿using System.Threading.Tasks;
+using UnityEngine;
 
 namespace SengokuNinjaVillage.Runtime
 {
-    public class SceneManager : MonoBehaviour
+    public abstract class SceneManager : MonoBehaviour
     {
-        public virtual void SceneAwake() { }
+        public abstract Task SceneAwake();
 
-        public virtual void SceneStart() { }
+        public abstract Task SceneStart();
 
         public virtual void SceneUpdate() { }
 

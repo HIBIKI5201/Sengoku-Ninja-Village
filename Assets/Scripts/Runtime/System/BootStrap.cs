@@ -1,5 +1,6 @@
 ﻿using SymphonyFrameWork.System;
 using System.Linq;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace SengokuNinjaVillage.Runtime.System
@@ -13,10 +14,10 @@ namespace SengokuNinjaVillage.Runtime.System
         /// シーンロード前の初期化
         /// </summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void Initialize()
+        private static async Task Initialize()
         {
             //システムシーンをロードする
-            var task = SceneLoader.LoadScene(SceneListEnum.System.ToString());
+            await SceneLoader.LoadScene(SceneListEnum.System.ToString());
 
             //システムシーンのマネージャーを初期化
             if (SceneLoader.GetExistScene(SceneListEnum.System.ToString(), out var scene))
@@ -34,7 +35,6 @@ namespace SengokuNinjaVillage.Runtime.System
 
                 manager.SceneAwake();
             }
-
         }
     }
 }

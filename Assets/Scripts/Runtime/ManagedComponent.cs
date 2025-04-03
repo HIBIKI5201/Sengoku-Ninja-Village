@@ -1,21 +1,23 @@
-﻿using UnityEngine;
+﻿using System.Threading.Tasks;
+using UnityEngine;
 
 namespace SengokuNinjaVillage.Runtime.System
 {
     /// <summary>
     /// シーンのシステムにマネジメントされるコンポーネント
+    /// ルートゲームオブジェクトのみ実行される
     /// </summary>
     public class ManagedComponent : MonoBehaviour
     {
         /// <summary>
         /// シーンシステムによるAwake
         /// </summary>
-        public virtual void ManagedAwake() { }
+        public virtual Task ManagedAwake() { return Task.CompletedTask; }
 
         /// <summary>
         /// シーンシステムによるUpdate
         /// </summary>
-        public virtual void ManagedStart() { }
+        public virtual Task ManagedStart() { return Task.CompletedTask; }
 
         /// <summary>
         /// シーンシステムによるUpdate
