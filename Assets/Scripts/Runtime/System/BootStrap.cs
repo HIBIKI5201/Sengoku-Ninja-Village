@@ -1,21 +1,29 @@
-using SymphonyFrameWork.System;
+ï»¿using SymphonyFrameWork.System;
+using System.Linq;
 using UnityEngine;
 
 namespace SengokuNinjaVillage.Runtime.System
 {
     /// <summary>
-    /// ƒQ[ƒ€‚Ì‰Šú‰»‚ğs‚¤
+    /// ã‚²ãƒ¼ãƒ ã®åˆæœŸåŒ–ã‚’è¡Œã†
     /// </summary>
     public static class BootStrap
     {
         /// <summary>
-        /// ƒV[ƒ“ƒ[ƒh‘O‚Ì‰Šú‰»
+        /// ã‚·ãƒ¼ãƒ³ãƒ­ãƒ¼ãƒ‰å‰ã®åˆæœŸåŒ–
         /// </summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
         private static void Initialize()
         {
-            //ƒVƒXƒeƒ€ƒV[ƒ“‚ğƒ[ƒh‚·‚é
+            //ã‚·ã‚¹ãƒ†ãƒ ã‚·ãƒ¼ãƒ³ã‚’ãƒ­ãƒ¼ãƒ‰ã™ã‚‹
             var task = SceneLoader.LoadScene(SceneListEnum.System.ToString());
+
+            if (SceneLoader.GetExistScene(SceneListEnum.System.ToString(), out var scene))
+            {
+                var manager = scene.GetRootGameObjects()
+                    .FirstOrDefault(go => go.GetComponent<SceneManager>());
+            }
+
         }
     }
 }
