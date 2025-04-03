@@ -1,7 +1,7 @@
 using SymphonyFrameWork.System;
 using UnityEngine;
 
-namespace SengokuNinjaVillage.System
+namespace SengokuNinjaVillage.Runtime.System
 {
     /// <summary>
     /// ƒQ[ƒ€‚Ì‰Šú‰»‚ğs‚¤
