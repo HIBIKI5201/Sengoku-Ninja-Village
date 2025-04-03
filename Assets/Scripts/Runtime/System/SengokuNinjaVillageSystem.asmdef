@@ -1,6 +1,6 @@
 {
     "name": "SengokuNinjaVillageSystem",
-    "rootNamespace": "SengokuNinjaVillage.System",
+    "rootNamespace": "SengokuNinjaVillage.Runtime.System",
     "references": [
         "GUID:68a532f43eeefd5408e4e8871b769ee4",
         "GUID:a4b9e426128515b49a84470275c7356d"
