@@ -10,7 +10,7 @@ namespace SengokuNinjaVillage.Runtime.System
     /// <summary>
     /// システムシーンのマネジメントを行う
     /// </summary>
-    public class SystemManager : SceneManager
+    public class SystemDirector : SceneDirector
     {
         private bool _isInitialize = false;
 

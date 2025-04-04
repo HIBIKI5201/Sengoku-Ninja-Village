@@ -12,7 +12,7 @@ namespace SengokuNinjaVillage.Runtime.System
         ///     シーンロード前の初期化
         /// </summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static async void Initialize()
+        private static void Initialize()
         {
             UnityEngine.SceneManagement.SceneManager.LoadScene(SceneListEnum.System.ToString());
 
@@ -20,17 +20,19 @@ namespace SengokuNinjaVillage.Runtime.System
             if (SceneLoader.GetExistScene(SceneListEnum.System.ToString(), out var scene))
             {
                 //マネージャーを取得
-                SceneManager manager = null;
+                SceneDirector director = null;
                 foreach (var go in scene.GetRootGameObjects())
-                    if (go.TryGetComponent(out SceneManager sm))
+                {
+                    if (go.TryGetComponent(out SceneDirector sd))
                     {
-                        manager = sm;
+                        director = sd;
                         break;
                     }
+                }
 
-                if (manager)
+                if (director)
                 {
-                    await manager.SceneAwake();
+                    _ = director.SceneAwake();
                 }
                 else
                 {

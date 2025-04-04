@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SengokuNinjaVillage.Runtime
 {
-    public abstract class SceneManager : MonoBehaviour
+    public abstract class SceneDirector : MonoBehaviour
     {
         public virtual Task SceneAwake() { return Task.CompletedTask; }
 
