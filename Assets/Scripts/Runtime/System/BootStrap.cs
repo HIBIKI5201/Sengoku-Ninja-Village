@@ -1,23 +1,20 @@
 ﻿using SymphonyFrameWork.System;
-using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 
 namespace SengokuNinjaVillage.Runtime.System
 {
     /// <summary>
-    /// ゲームの初期化を行う
+    ///     ゲームの初期化を行う
     /// </summary>
     public static class BootStrap
     {
         /// <summary>
-        /// シーンロード前の初期化
+        ///     シーンロード前の初期化
         /// </summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static async Task Initialize()
+        private static async void Initialize()
         {
-            //システムシーンをロードする
-            await SceneLoader.LoadScene(SceneListEnum.System.ToString());
+            UnityEngine.SceneManagement.SceneManager.LoadScene(SceneListEnum.System.ToString());
 
             //システムシーンのマネージャーを初期化
             if (SceneLoader.GetExistScene(SceneListEnum.System.ToString(), out var scene))
@@ -25,15 +22,20 @@ namespace SengokuNinjaVillage.Runtime.System
                 //マネージャーを取得
                 SceneManager manager = null;
                 foreach (var go in scene.GetRootGameObjects())
-                {
                     if (go.TryGetComponent(out SceneManager sm))
                     {
                         manager = sm;
                         break;
                     }
-                }
 
-                await manager.SceneAwake();
+                if (manager)
+                {
+                    await manager.SceneAwake();
+                }
+                else
+                {
+                    Debug.LogWarning("System Scene not found");
+                }
             }
         }
     }
