@@ -1,7 +1,9 @@
 {
-    "name": "SymphonyFrameWork.Enum",
-    "rootNamespace": "",
-    "references": [],
+    "name": "SengokuNinjaVillageOutGame",
+    "rootNamespace": "SengokuNinjaVillage.Runtime.OutGame",
+    "references": [
+        "GUID:49906e3a45f1f2542a6b385ab751d679"
+    ],
     "includePlatforms": [],
     "excludePlatforms": [],
     "allowUnsafeCode": false,
@@ -10,6 +12,5 @@
     "autoReferenced": true,
     "defineConstraints": [],
     "versionDefines": [],
-    "noEngineReferences": false,
-    "platforms": []
+    "noEngineReferences": false
 }

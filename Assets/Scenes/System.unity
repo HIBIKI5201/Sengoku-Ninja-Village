@@ -148,6 +148,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 10055f2eb88c5a845b6532947d607ff7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _configPath: SystemAsset/Boot Config
 --- !u!4 &1410127738
 Transform:
   m_ObjectHideFlags: 0

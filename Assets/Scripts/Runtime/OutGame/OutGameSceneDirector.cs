@@ -1,8 +1,9 @@
-using UnityEngine;
+using System.Threading.Tasks;
 
-namespace SengokuNinjaVillage.Runtime
+namespace SengokuNinjaVillage.Runtime.System
 {
-    public class OutGameSceneDirector : SceneDirector
+    public class OutGameSceneDirector : SystemSceneDirector
     {
+        
     }
 }
