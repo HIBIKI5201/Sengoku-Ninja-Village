@@ -16,10 +16,11 @@ namespace SengokuNinjaVillage.Runtime.System
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
         private static async void Initialize()
         {
-            await SceneManager.LoadSceneAsync(SceneListEnum.System.ToString(), LoadSceneMode.Single);
-            Scene scene = SceneManager.GetSceneByName(SceneListEnum.System.ToString());
-            
-            //システムシーンのマネージャーを初期化
+            //システムシーンをロードし、それ以外はアンロード
+            await SceneLoader.LoadScene(SceneListEnum.System.ToString(), mode: LoadSceneMode.Single);
+
+            if (SceneLoader.GetExistScene(SceneListEnum.System.ToString(), out var scene))
+            {
                 //システムシーンのロードが終わるまで待機
                 while (!scene.IsValid() || !scene.isLoaded)
                 {
@@ -46,6 +47,7 @@ namespace SengokuNinjaVillage.Runtime.System
                 {
                     Debug.LogWarning("System Scene not found");
                 }
+            }
         }
         
     }
