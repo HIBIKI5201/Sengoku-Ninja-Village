@@ -1,43 +1,30 @@
-﻿using PlasticGui.WorkspaceWindow.PendingChanges;
-using SymphonyFrameWork.System;
-using System;
-using System.Linq;
+﻿using System;
 using System.Threading.Tasks;
+using SymphonyFrameWork.System;
 using UnityEngine;
+using UnityEngine.Serialization;
 
 namespace SengokuNinjaVillage.Runtime.System
 {
     /// <summary>
-    /// システムシーンのマネジメントを行う
+    ///     システムシーンのマネジメントを行う
     /// </summary>
     public class SystemSceneDirector : SceneDirector
     {
-        private bool _isInitialize = false;
-
+       [SerializeField] private string _configPath = "SystemAsset/Boot Config";
+        
         public override async Task SceneAwake()
         {
+            //コンフィグをロード
+            var request = Resources.LoadAsync<BootConfig>(_configPath);
+            await request;
+            var config = request.asset as BootConfig;
 
-            //初期化を実行
-            try
+            //設定されたシーンをロード
+            if (config)
             {
-                await Awaitable.NextFrameAsync(destroyCancellationToken);
-
-                await SceneStart();
-
-                await Awaitable.NextFrameAsync(destroyCancellationToken);
+                await SceneLoader.LoadScene(config.InitializeSceneKind.ToString());
             }
-            catch (OperationCanceledException ex)
-            {
-                Debug.Log($"システムの初期化をキャンセル\n{ex}");
-            }
-
-            //初期化終了を記録
-            _isInitialize = true;
-        }
-
-        private void Update()
-        {
-            if (!_isInitialize) return;
         }
     }
 }

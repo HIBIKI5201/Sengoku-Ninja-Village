@@ -30,6 +30,7 @@ namespace SengokuNinjaVillage.Runtime.System
                     }
                 }
 
+                //システムシーンを初期化
                 if (director)
                 {
                     _ = director.SceneAwake();
