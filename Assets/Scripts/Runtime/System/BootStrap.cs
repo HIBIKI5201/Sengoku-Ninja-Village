@@ -1,4 +1,5 @@
 ﻿using SymphonyFrameWork.System;
+using System.Threading.Tasks;
 using UnityEngine;
 
 namespace SengokuNinjaVillage.Runtime.System
@@ -12,13 +13,19 @@ namespace SengokuNinjaVillage.Runtime.System
         ///     シーンロード前の初期化
         /// </summary>
         [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
-        private static void Initialize()
+        private static async void Initialize()
         {
-            UnityEngine.SceneManagement.SceneManager.LoadScene(SceneListEnum.System.ToString());
+            await SceneLoader.LoadScene(SceneListEnum.System.ToString());
 
             //システムシーンのマネージャーを初期化
             if (SceneLoader.GetExistScene(SceneListEnum.System.ToString(), out var scene))
             {
+                //システムシーンのロードが終わるまで待機
+                while (!scene.IsValid() || !scene.isLoaded)
+                {
+                    await Awaitable.NextFrameAsync();
+                }
+
                 //マネージャーを取得
                 SceneDirector director = null;
                 foreach (var go in scene.GetRootGameObjects())
@@ -41,5 +48,6 @@ namespace SengokuNinjaVillage.Runtime.System
                 }
             }
         }
+        
     }
 }
