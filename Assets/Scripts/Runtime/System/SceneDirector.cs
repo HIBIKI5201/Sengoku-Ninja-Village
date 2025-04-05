@@ -5,11 +5,10 @@ namespace SengokuNinjaVillage.Runtime
 {
     public abstract class SceneDirector : MonoBehaviour
     {
-        public virtual Task SceneAwake() { return Task.CompletedTask; }
-
-        public virtual Task SceneStart() { return Task.CompletedTask; }
-
-        public virtual void SceneUpdate() { }
-
+        /// <summary>
+        ///     シーンの初期化
+        /// </summary>
+        /// <returns></returns>
+        public virtual Task SceneAwake() => Task.CompletedTask;
     }
 }
