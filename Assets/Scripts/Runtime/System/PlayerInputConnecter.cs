@@ -25,15 +25,25 @@ namespace SengokuNinjaVillage
                 return;
             }
             inputSystem.actions["Move"].performed += OnMoving;
-            inputSystem.actions["Jump"].performed += OnJump;
+            inputSystem.actions["Jump"].performed += OnJumping;
             inputSystem.actions["Dash"].performed += OnDash;
             inputSystem.actions["Crouch"].performed += OnCrouch;
         }
 
         private void OnDestroy()
         {
-            inputSystem.actions["Move"].performed -= OnMoving;
-            ServiceLocator.DestroyInstance<PlayerInputConecter>();
+            try
+            {
+                inputSystem.actions["Move"].performed -= OnMoving;
+            }
+            catch (Exception e)
+            {
+
+            }
+            finally
+            {
+                ServiceLocator.DestroyInstance<PlayerInputConecter>();
+            }
         }
 
         private void OnMoving(InputAction.CallbackContext contextMenu)
@@ -45,7 +55,7 @@ namespace SengokuNinjaVillage
         {
             InputManager.GetRegisterAction(InputManager.InputKind.Dash)?.Invoke();
         }
-        private void OnJump(InputAction.CallbackContext contextMenu)
+        private void OnJumping(InputAction.CallbackContext contextMenu)
         {
             InputManager.GetRegisterAction(InputManager.InputKind.Jump)?.Invoke();
         }

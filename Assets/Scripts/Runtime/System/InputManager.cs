@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using SymphonyFrameWork.System;
 using UnityEngine;
@@ -27,23 +28,20 @@ namespace SengokuNinjaVillage.Runtime.System
         public static void AddAction(InputKind input, Action action)
         {
             if(_actionListDictionary.TryAdd(input, action)) return;
-            var contains = _actionListDictionary.TryGetValue(input, out Delegate value);
-
-            MethodInfo info = _actionListDictionary[input].Method;
-            if (info.GetParameters()[0].ParameterType == typeof(Action))
+            if (_actionListDictionary.TryGetValue(input, out Delegate value) &&
+                _actionListDictionary[input].GetType() == action.GetType())
             {
                 _actionListDictionary[input] = Delegate.Combine(value, action);
             }
             else
             {
-                Debug.LogError($"Action:{action} is not supported.\n" +
-                               $"supported by {info.GetParameters()[0].ParameterType}");
+                Debug.LogError($"Action:{action} is not supported.\n" + 
+                               $"supported by {_actionListDictionary[input].Method.GetParameters()[0].ParameterType}");
             }
         }
         
         public static void AddAction<T>(InputKind input, Action<T> action)
         {
-            Debug.Log("touroku");
             if(_actionListDictionary.TryAdd(input, action)) return;
             if (_actionListDictionary.TryGetValue(input, out Delegate value) &&
                 _actionListDictionary[input].GetType() == action.GetType())
@@ -69,7 +67,8 @@ namespace SengokuNinjaVillage.Runtime.System
         
         public static void RemoveAction<T>(InputKind input, Action<T> action)
         {
-            if (_actionListDictionary.TryGetValue(input, out Delegate value))
+            if (_actionListDictionary.TryGetValue(input, out Delegate value)&& 
+            _actionListDictionary[input].GetType() == action.GetType())
             {
                 _actionListDictionary[input] = Delegate.Remove(value, action);
             }
@@ -82,15 +81,43 @@ namespace SengokuNinjaVillage.Runtime.System
             {
                 action?.Invoke();
             }
+            else if (_actionListDictionary.TryGetValue(input, out var fallback) && fallback != null)
+            {
+                var list = fallback.GetInvocationList();
+                if (list.Length > 0)
+                {
+                    var paramType = list[0].Method.GetParameters().FirstOrDefault()?.ParameterType;
+                    Debug.Log($"Action<> is not supported." +
+                              $" Supported type: {paramType}");
+                }
+            }
+            else
+            {
+                Debug.Log($"{input}Action is null   ");
+            }
             
         }
-
 
         private static void Invoke<T>(InputKind input, T value)
         {
             if (_actionListDictionary.TryGetValue(input, out Delegate del) && del is Action<T> action)
             {
+                Debug.Log(del as Action<T>);
                 action?.Invoke(value);
+            }
+            else if (_actionListDictionary.TryGetValue(input, out var fallback) && fallback != null)
+            {
+                var list = fallback.GetInvocationList();
+                if (list.Length > 0)
+                {
+                    var paramType = list[0].Method.GetParameters().FirstOrDefault()?.ParameterType;
+                    Debug.Log($"Action:{value.GetType()} is not supported." +
+                              $" Supported type: {paramType}");
+                }
+            }
+            else
+            {
+                Debug.Log($"{input}Action is null   ");
             }
         }
 
