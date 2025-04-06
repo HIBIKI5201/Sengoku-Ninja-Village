@@ -10,5 +10,7 @@ namespace SengokuNinjaVillage.Runtime
         /// </summary>
         /// <returns></returns>
         public virtual Task SceneAwake() => Task.CompletedTask;
+        
+        public abstract SceneListEnum[] RequiredScenes { get; }
     }
 }
