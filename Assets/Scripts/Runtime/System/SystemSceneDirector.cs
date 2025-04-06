@@ -24,6 +24,7 @@ namespace SengokuNinjaVillage.Runtime.System
             if (config)
             {
                 await SceneLoader.LoadScene(config.InitializeSceneKind.ToString());
+                SceneLoader.SetActiveScene(config.InitializeSceneKind.ToString());
             }
         }
     }
