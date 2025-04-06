@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
+using SymphonyFrameWork.Debugger;
 using SymphonyFrameWork.System;
 using UnityEngine;
 
@@ -41,10 +43,27 @@ namespace SengokuNinjaVillage.Runtime.System
         /// <param name="sceneKind"></param>
         public async Task ChangeScene(SceneListEnum sceneKind)
         {
+            SymphonyDebugLog.AddText("以下のシーンをロード。");
+            
             //メインのシーンをロード
-            await SceneLoader.LoadScene(sceneKind.ToString());
-            SceneLoader.SetActiveScene(sceneKind.ToString());
+            await LoadScene(sceneKind);
+            if (SceneLoader.SetActiveScene(sceneKind.ToString()))
+            {
+                SymphonyDebugLog.AddText($"{sceneKind.ToString()}のロードが完了");
+                SymphonyDebugLog.TextLog();
+            }
+            else
+            {
+                SymphonyDebugLog.AddText($"{sceneKind.ToString()}のロードに失敗");
+                SymphonyDebugLog.TextLog(SymphonyDebugLog.LogKind.Warning);
+            }
+        }
 
+        private static async Task LoadScene(SceneListEnum sceneKind)
+        {
+            await SceneLoader.LoadScene(sceneKind.ToString());
+            SymphonyDebugLog.AddText(sceneKind.ToString());
+            
             //ロードしたシーンからディレクターを取得
             SceneDirector director = null;
             if (SceneLoader.GetExistScene(sceneKind.ToString(), out var scene))
@@ -58,25 +77,23 @@ namespace SengokuNinjaVillage.Runtime.System
                     }
                 }
             }
-            
+
             if (!director)
             {
-                Debug.LogWarning("ロードされたシーンにはディレクターがありません");
                 return;
             }
-
-            if (director.RequiredScenes.Length <= 0)
-            {
-                return;
-            }
-                
+            
             //必要なシーンをロード
-            Task[] loadTasks = new Task[director.RequiredScenes.Length];
             for (int i = 0; i < director.RequiredScenes.Length; i++)
             {
-                loadTasks[i] = SceneLoader.LoadScene(director.RequiredScenes[i].ToString());
+                var requiredScene = director.RequiredScenes[i];
+
+                //対象シーンが未ロードだった場合はロードを開始する
+                if (!SceneLoader.GetExistScene(requiredScene.ToString(), out _))
+                {
+                    await LoadScene(requiredScene);
+                }
             }
-            await Task.WhenAll(loadTasks);
         }
     }
 }
