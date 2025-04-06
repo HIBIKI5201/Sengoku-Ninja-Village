@@ -60,7 +60,7 @@ Rigidbody:
   m_UseGravity: 1
   m_IsKinematic: 0
   m_Interpolate: 0
-  m_Constraints: 0
+  m_Constraints: 112
   m_CollisionDetection: 0
 --- !u!136 &3844995284984620899
 CapsuleCollider:
@@ -105,38 +105,46 @@ MonoBehaviour:
     m_Processors: 
     m_Interactions: 
     m_SingletonActionBindings:
-    - m_Name: 
-      m_Id: d1812289-852c-411b-bff4-b08221605822
+    - m_Name: Keyboard
+      m_Id: d7e093eb-4070-4d9e-b9ef-09004f8b8628
+      m_Path: 2DVector
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Input
+      m_Flags: 4
+    - m_Name: up
+      m_Id: 74bae93b-5c9f-4358-b82d-94105020714d
       m_Path: <Keyboard>/upArrow
       m_Interactions: 
       m_Processors: 
       m_Groups: 
       m_Action: Input
-      m_Flags: 0
-    - m_Name: 
-      m_Id: 70bb05db-7da4-426e-8942-b58201e27464
+      m_Flags: 8
+    - m_Name: down
+      m_Id: b3925319-a057-4888-81dd-4448fde09810
       m_Path: <Keyboard>/downArrow
       m_Interactions: 
       m_Processors: 
       m_Groups: 
       m_Action: Input
-      m_Flags: 0
-    - m_Name: 
-      m_Id: d38944f6-cac4-49bc-b5c5-17fa362091ce
+      m_Flags: 8
+    - m_Name: left
+      m_Id: 3432ec4c-8378-46d2-8ded-47cb339c2e17
       m_Path: <Keyboard>/leftArrow
       m_Interactions: 
       m_Processors: 
       m_Groups: 
       m_Action: Input
-      m_Flags: 0
-    - m_Name: 
-      m_Id: bdc4ffee-4731-4848-aedd-e89dda82db4c
+      m_Flags: 8
+    - m_Name: right
+      m_Id: d98ef62f-c28c-44f0-a3f1-fafdd4cb49bd
       m_Path: <Keyboard>/rightArrow
       m_Interactions: 
       m_Processors: 
       m_Groups: 
       m_Action: Input
-      m_Flags: 0
+      m_Flags: 8
     m_Flags: 0
 --- !u!1 &5605498940109191475
 GameObject:
