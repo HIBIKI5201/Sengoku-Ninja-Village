@@ -4,8 +4,9 @@ using SymphonyFrameWork.System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-namespace SengokuNinjaVillage
+namespace SengokuNinjaVillage.Runtime.System
 {
+    [RequireComponent(typeof(PlayerInput))]
     public class PlayerInputConecter : MonoBehaviour
     {
         private PlayerInput inputSystem;
