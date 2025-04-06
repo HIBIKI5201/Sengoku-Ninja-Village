@@ -2,6 +2,7 @@
 {
     None = 0,
     InGame = 1,
-    OutGame = 2,
-    System = 3,
+    MapScene_1 = 2,
+    OutGame = 3,
+    System = 4,
 }
