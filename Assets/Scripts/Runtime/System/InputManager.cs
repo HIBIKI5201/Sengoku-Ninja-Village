@@ -7,19 +7,18 @@ using UnityEngine.InputSystem;
 
 namespace SengokuNinjaVillage.Runtime.System
 {
-    
-    
     public static class InputManager
     {
-        private static Dictionary<InputKind, Delegate> _actionListDictionary = new Dictionary<InputKind, Delegate>();
         
-        public static Action RegisterAction(InputKind input)
+        private static readonly Dictionary<InputKind, Delegate> _actionListDictionary = new ();
+        
+        public static Action GetRegisterAction(InputKind input)
         {
             _actionListDictionary.TryAdd(input, null);
             return () => Invoke(input);
         }
         
-        public static Action RegisterAction<T>(InputKind input, T value)
+        public static Action GetRegisterAction<T>(InputKind input, T value)
         {
             _actionListDictionary.TryAdd(input, null);
             return () => Invoke(input, value);
@@ -27,7 +26,7 @@ namespace SengokuNinjaVillage.Runtime.System
 
         public static void AddAction(InputKind input, Action action)
         {
-            _actionListDictionary.TryAdd(input, action);
+            if(_actionListDictionary.TryAdd(input, action)) return;
             var contains = _actionListDictionary.TryGetValue(input, out Delegate value);
 
             MethodInfo info = _actionListDictionary[input].Method;
@@ -44,29 +43,28 @@ namespace SengokuNinjaVillage.Runtime.System
         
         public static void AddAction<T>(InputKind input, Action<T> action)
         {
-            _actionListDictionary.TryAdd(input, action);
-            var contains = _actionListDictionary.TryGetValue(input, out Delegate value);
-
-            MethodInfo info = _actionListDictionary[input].Method;
-            if (info.GetParameters()[0].ParameterType == typeof(Action<T>))
+            Debug.Log("touroku");
+            if(_actionListDictionary.TryAdd(input, action)) return;
+            if (_actionListDictionary.TryGetValue(input, out Delegate value) &&
+                _actionListDictionary[input].GetType() == action.GetType())
             {
                 _actionListDictionary[input] = Delegate.Combine(value, action);
             }
             else
             {
-                Debug.LogError($"Action:{action} is not supported.\n" +
-                               $"supported by {info.GetParameters()[0].ParameterType}");
+                Debug.LogError($"Action:{action} is not supported.\n" + 
+                               $"supported by {_actionListDictionary[input].Method.GetParameters()[0].ParameterType}");
             }
         }
 
 
         public static void RemoveAction(InputKind input, Action action)
         {
-            if (_actionListDictionary.TryGetValue(input, out Delegate value))
+            if (_actionListDictionary.TryGetValue(input, out Delegate value) && 
+                _actionListDictionary[input].GetType() == action.GetType())
             {
                 _actionListDictionary[input] = Delegate.Remove(value, action);
             }
-            else _actionListDictionary.Add(input, action);
         }
         
         public static void RemoveAction<T>(InputKind input, Action<T> action)
@@ -84,6 +82,7 @@ namespace SengokuNinjaVillage.Runtime.System
             {
                 action?.Invoke();
             }
+            
         }
 
 
@@ -95,11 +94,20 @@ namespace SengokuNinjaVillage.Runtime.System
             }
         }
 
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.SubsystemRegistration)]
+        public static void ResetActions()
+        {
+            Debug.Log($"{_actionListDictionary} Reset");
+            _actionListDictionary.Clear();
+        }
+
         public enum InputKind
         {
             None = 0,
-            Move = 2,
-            Jump = 1,
+            Move = 1,
+            Jump = 2,
+            Crouch = 3,
+            Dash = 4
         }
     }
 }
