@@ -13,17 +13,13 @@ namespace SengokuNinjaVillage.Runtime.System
         
         public override SceneListEnum[] RequiredScenes => Array.Empty<SceneListEnum>();
         
-        [SerializeField] private string _configPath = "SystemAsset/Boot Config";
-
         public override async Task SceneAwake()
         {
             //コンフィグをロード
-            var request = Resources.LoadAsync<BootConfig>(_configPath);
+            var request = Resources.LoadAsync<BootConfig>(BootStrap.ConfigPath);
             await request;
             var config = request.asset as BootConfig;
-
-            #region 設定されたシーンをロード
-
+            
             if (!config)
             {
                 Debug.LogWarning("Boot Configが見つかりません");
@@ -37,8 +33,6 @@ namespace SengokuNinjaVillage.Runtime.System
             }
             
             await ChangeScene(config.InitializeSceneKind);
-
-            #endregion
         }
 
         /// <summary>
