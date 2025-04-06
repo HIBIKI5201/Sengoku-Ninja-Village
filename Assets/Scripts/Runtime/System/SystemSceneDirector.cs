@@ -1,8 +1,6 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using SymphonyFrameWork.System;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 namespace SengokuNinjaVillage.Runtime.System
 {
@@ -11,8 +9,8 @@ namespace SengokuNinjaVillage.Runtime.System
     /// </summary>
     public class SystemSceneDirector : SceneDirector
     {
-       [SerializeField] private string _configPath = "SystemAsset/Boot Config";
-        
+        [SerializeField] private string _configPath = "SystemAsset/Boot Config";
+
         public override async Task SceneAwake()
         {
             //コンフィグをロード
@@ -20,11 +18,24 @@ namespace SengokuNinjaVillage.Runtime.System
             await request;
             var config = request.asset as BootConfig;
 
-            //設定されたシーンをロード
-            if (config)
+            #region 設定されたシーンをロード
+
+            if (!config)
             {
-                await SceneLoader.LoadScene(config.InitializeSceneKind.ToString());
+                Debug.LogWarning("Boot Configが見つかりません");
+                return;
             }
+
+            if (config.InitializeSceneKind != SceneListEnum.None)
+            {
+                Debug.LogWarning("InitializeSceneKindが設定されていません");
+                return;
+            }
+
+            await SceneLoader.LoadScene(config.InitializeSceneKind.ToString());
+            SceneLoader.SetActiveScene(config.InitializeSceneKind.ToString());
+
+            #endregion
         }
     }
 }
