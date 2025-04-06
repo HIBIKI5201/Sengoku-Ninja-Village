@@ -9,33 +9,34 @@ namespace SengokuNinjaVillage.Runtime.System
     [RequireComponent(typeof(PlayerInput))]
     public class PlayerInputConecter : MonoBehaviour
     {
-        private PlayerInput inputSystem;
+        private PlayerInput _inputSystem;
 
         private void Awake()
         {
             ServiceLocator.SetInstance(this, ServiceLocator.LocateType.Singleton);
         }
         
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
         private void Start()
         {
-            inputSystem = GetComponent<PlayerInput>();
+            _inputSystem = GetComponent<PlayerInput>();
             
-            if (inputSystem == null)
+            if (_inputSystem == null)
             {
                 return;
             }
-            inputSystem.actions["Move"].performed += OnMoving;
-            inputSystem.actions["Jump"].performed += OnJumping;
-            inputSystem.actions["Dash"].performed += OnDash;
-            inputSystem.actions["Crouch"].performed += OnCrouch;
+            _inputSystem.actions["Move"].performed += OnMoving;
+            _inputSystem.actions["Jump"].performed += OnJumping;
+            _inputSystem.actions["Dash"].performed += OnDash;
+            _inputSystem.actions["Crouch"].performed += OnCrouch;
+            _inputSystem.actions["Interact"].performed += OnInteract;
         }
 
         private void OnDestroy()
         {
+            //再生時にOnDestroyが呼ばれて、エラーが出たため一時的にTry Catch
             try
             {
-                inputSystem.actions["Move"].performed -= OnMoving;
+                _inputSystem.actions["Move"].performed -= OnMoving;
             }
             catch (Exception e)
             {
@@ -49,8 +50,8 @@ namespace SengokuNinjaVillage.Runtime.System
 
         private void OnMoving(InputAction.CallbackContext contextMenu)
         {
-            var n = contextMenu.ReadValue<Vector2>();
-            InputManager.GetRegisterAction(InputManager.InputKind.Move, n)?.Invoke();
+            var input = contextMenu.ReadValue<Vector2>();
+            InputManager.GetRegisterAction(InputManager.InputKind.Move, input)?.Invoke();
         }
         private void OnDash(InputAction.CallbackContext contextMenu)
         {
@@ -63,6 +64,11 @@ namespace SengokuNinjaVillage.Runtime.System
         private void OnCrouch(InputAction.CallbackContext contextMenu)
         {
             InputManager.GetRegisterAction(InputManager.InputKind.Crouch)?.Invoke();
+        }
+
+        private void OnInteract(InputAction.CallbackContext contextMenu)
+        {
+            InputManager.GetRegisterAction(InputManager.InputKind.Interact)?.Invoke();
         }
     }
 }

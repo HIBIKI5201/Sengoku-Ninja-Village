@@ -166,7 +166,8 @@ namespace SengokuNinjaVillage.Runtime.System
             Move = 1,
             Jump = 2,
             Crouch = 3,
-            Dash = 4
+            Dash = 4,
+            Interact = 5
         }
     }
 }
