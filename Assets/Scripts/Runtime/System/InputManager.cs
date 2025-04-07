@@ -34,7 +34,7 @@ namespace SengokuNinjaVillage.Runtime.System
         public static Action GetRegisterAction<T>(InputKind input, T value)
         {
             _actionListDictionary.TryAdd(input, null);
-            if ( _actionListDictionary[input] != null && _actionListDictionary[input].GetType() != typeof(Action))
+            if ( _actionListDictionary[input] != null && _actionListDictionary[input].GetType() != typeof(Action<T>))
             {
                 Debug.Log(_actionListDictionary[input].GetType());
                 return null;
