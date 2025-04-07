@@ -1,43 +1,37 @@
-﻿using System;
-using UnityEngine;
-using UnityEngine.InputSystem;
+﻿using UnityEngine;
+using static SengokuNinjaVillage.Runtime.System.InputManager;
 
 namespace SengokuNinjaVillage
 {
     [RequireComponent(typeof(Rigidbody))]
     public class PlayerManager : MonoBehaviour
     {
-        [SerializeField] InputAction _input;
         Rigidbody _rb;
         Vector2 _inputVector;
-        float _moveSpeed = 5;
+        [SerializeField] float _moveSpeed = 5;
         private void Start()
         {
             _rb = GetComponent<Rigidbody>();
         }
         void OnEnable()
         {
-            _input.Enable();
-            _input.started += Input;
-            _input.performed += Input;
-            _input.canceled += Input;
+            AddAction<Vector2>(InputKind.Move, OnMoveInput);
         }
 
         void OnDisable()
         {
-            _input.started -= Input;
-            _input.performed -= Input;
-            _input.canceled -= Input;
-            _input.Disable();
+            RemoveAction<Vector2>(InputKind.Move, OnMoveInput);
         }
         private void Update()
         {
             Move(_inputVector);
         }
 
-        void Input(InputAction.CallbackContext context)
+        void OnMoveInput(Vector2 input)
         {
-            _inputVector = _input.ReadValue<Vector2>();
+            Debug.Log($"input : {input}");
+
+            _inputVector = input;
         }
 
         void Move(Vector2 input)
