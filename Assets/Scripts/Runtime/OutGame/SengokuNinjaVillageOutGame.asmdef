@@ -2,7 +2,8 @@
     "name": "SengokuNinjaVillageOutGame",
     "rootNamespace": "SengokuNinjaVillage.Runtime.OutGame",
     "references": [
-        "GUID:49906e3a45f1f2542a6b385ab751d679"
+        "GUID:49906e3a45f1f2542a6b385ab751d679",
+        "GUID:246abdc565b0c0e4d87ad0b306083639"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

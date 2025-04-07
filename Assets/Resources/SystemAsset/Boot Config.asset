@@ -12,4 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 776330583afb1da48911580ca48af0d9, type: 3}
   m_Name: Boot Config
   m_EditorClassIdentifier: 
-  _sceneKind: 2
+  _sceneKind: 1
+  _initializeScene: 1
