@@ -22,11 +22,17 @@ namespace SengokuNinjaVillage.Runtime.System
         /// <returns>発火用のAction</returns>
         public static Action GetRegisterAction(InputKind input, InputTriggerType type = default)
         {
-            _actionListDictionary.TryAdd(input, null);
-            if (_actionListDictionary[input] != null && _actionListDictionary[input].GetType() != typeof(Action))
+            if (!_actionListDictionary.TryGetValue(input, out var triggerMap) ||
+                !triggerMap.TryGetValue(type, out var del))
             {
-                //引数が登録されたものと一致していなかったらLogを流す。
-                Debug.LogWarning($"input:{input} {_actionListDictionary[input].GetType()} is not suported");
+                Debug.LogWarning($"Action for input:{input} and type:{type} is not registered.");
+                return null;
+            }
+            
+            if(del is not Action)
+            {
+                var paramTypeName = del?.Method.GetParameters().FirstOrDefault()?.ParameterType?.Name ?? "Null";
+                Debug.LogWarning($"input:{input} has unsupported delegate type. Expected: Action. Found: {paramTypeName}");
                 return null;
             }
 
@@ -36,10 +42,17 @@ namespace SengokuNinjaVillage.Runtime.System
         /// <typeparam name="T">Actionの引数指定</typeparam>
         public static Action GetRegisterAction<T>(InputKind input, InputTriggerType type, T value)
         {
-            _actionListDictionary.TryAdd(input, null);
-            if (_actionListDictionary[input] != null && _actionListDictionary[input].GetType() != typeof(Action<T>))
+            if (!_actionListDictionary.TryGetValue(input, out var triggerMap) ||
+                !triggerMap.TryGetValue(type, out var del))
             {
-                Debug.LogWarning($"{_actionListDictionary[input].GetType()} is not suported");
+                Debug.LogWarning($"Action for input:{input} and type:{type} is not registered.");
+                return null;
+            }
+            
+            if(del is not Action<T>)
+            {
+                var paramTypeName = del?.Method.GetParameters().FirstOrDefault()?.ParameterType?.Name ?? "Null";
+                Debug.LogWarning($"input:{input} has unsupported delegate type. Expected: Action. Found: {paramTypeName}");
                 return null;
             }
 
@@ -52,36 +65,60 @@ namespace SengokuNinjaVillage.Runtime.System
         /// </summary>
         public static void AddAction(InputKind input, InputTriggerType type, Action action)
         {
-            if (_actionListDictionary.TryAdd(input, new Dictionary<InputTriggerType, Delegate> {{ type, action }}) || 
-                _actionListDictionary[input].TryAdd(type, action)) return; //DicTionaryに登録されていない場合は新しくDictionaryを作成する
+            //多重Dictionaryが存在しない場合の処理。
+            if (!_actionListDictionary.TryGetValue(input, out var actionList))
+            {
+                _actionListDictionary[input] = new Dictionary<InputTriggerType, Delegate>()
+                {
+                    [type] = action
+                };
+                return;
+            }
+
+            //Dictionary内に指定のKeyがない。もしくはDelegateが存在しない場合の処理。
+            if (!actionList.TryGetValue(type, out var existing) || existing == null)
+            {
+                actionList[type] = action;
+                return;
+            }
             
-            if (_actionListDictionary[input].TryGetValue(type, out Delegate value) &&
-                value.GetType() == action.GetType())//型が一致している場合はActionを登録する
+            //Delegateの型が一致している場合の処理。
+            if (existing is Action)
             {
-                _actionListDictionary[input][type] = Delegate.Combine(value, action);
+                actionList[type] = Delegate.Combine(existing, action);
+                return;
             }
-            else //Actionの引数が一致していない場合はError
-            {
-                Debug.LogError($"Action:{action} is not supported.\n" +
-                               $"supported by {_actionListDictionary[input][type].Method.GetParameters()[0].ParameterType}");
-            }
+
+            //Delegateの型が一致していない場合はLogで型の内容を知らせる。
+            Debug.LogError($"Action:{action} is not supported.\n" +
+                           $"supported by {_actionListDictionary[input][type].Method.GetParameters()[0].ParameterType}");
         }
 
         public static void AddAction<T>(InputKind input, InputTriggerType type, Action<T> action)
         {
-            if (_actionListDictionary.TryAdd(input, new Dictionary<InputTriggerType, Delegate> {{ type, action }}) || 
-                _actionListDictionary[input].TryAdd(type, action)) return;
-            
-                if (_actionListDictionary[input].TryGetValue(type, out Delegate value) &&
-                    value.GetType() == action.GetType())
+            if (!_actionListDictionary.TryGetValue(input, out var actionList))
+            {
+                _actionListDictionary[input] = new Dictionary<InputTriggerType, Delegate>()
                 {
-                    _actionListDictionary[input][type] = Delegate.Combine(value, action);
-                }
-                else
-                {
-                    Debug.LogError($"Action:{action} is not supported.\n" +
-                                   $"supported by {_actionListDictionary[input][type].Method.GetParameters()[0].ParameterType}");
-                }
+                    [type] = action
+                };
+                return;
+            }
+
+            if (!actionList.TryGetValue(type, out var existing))
+            {
+                actionList[type] = action;
+                return;
+            }
+
+            if (existing is Action<T>)
+            {
+                actionList[type] = Delegate.Combine(existing, action);
+                return;
+            }
+
+            Debug.LogError($"Action:{action} is not supported.\n" +
+                           $"supported by {_actionListDictionary[input][type].Method.GetParameters()[0].ParameterType}");
         }
 
         /// <summary>
@@ -93,19 +130,39 @@ namespace SengokuNinjaVillage.Runtime.System
         /// <param name="action"></param>
         public static void RemoveAction(InputKind input,　InputTriggerType type, Action action)
         {
-            if (_actionListDictionary.ContainsKey(input)&&_actionListDictionary[input].TryGetValue(type, out Delegate value) &&
-                _actionListDictionary[input].GetType() == action.GetType())
+            if (!_actionListDictionary.TryGetValue(input, out Dictionary<InputTriggerType, Delegate> actionList) ||
+                !actionList.TryGetValue(type, out Delegate del))
             {
-                _actionListDictionary[input][type] = Delegate.Remove(value, action);
+                return;
+            }
+
+            if (del is Action)
+            {
+                del = Delegate.Remove(del, action);
+            }
+            else if (del != null && del.GetType() != typeof(Action))
+            {
+                Debug.Log($"Action:{input} Type:{type} is not supported." +
+                          $" Supported type: {del.Method.GetParameters()[0].ParameterType}");
             }
         }
 
         public static void RemoveAction<T>(InputKind input, InputTriggerType type, Action<T> action)
         {
-            if (_actionListDictionary.ContainsKey(input)&&_actionListDictionary[input].TryGetValue(type, out Delegate value) &&
-                _actionListDictionary[input].GetType() == action.GetType())
+            if (!_actionListDictionary.TryGetValue(input, out Dictionary<InputTriggerType, Delegate> actionList) ||
+                !actionList.TryGetValue(type, out Delegate del))
             {
-                _actionListDictionary[input][type] = Delegate.Remove(value, action);
+                return;
+            }
+
+            if (del is Action<T>)
+            {
+                del = Delegate.Remove(del, action);
+            }
+            else if (del != null && del.GetType() != typeof(Action<T>))
+            {
+                Debug.Log($"Action:{input} Type:{type} is not supported." +
+                          $" Supported type: {del.Method.GetParameters()[0].ParameterType}");
             }
         }
 
@@ -116,50 +173,53 @@ namespace SengokuNinjaVillage.Runtime.System
         /// <param name="type">ボタンからコールバックされるタイミング</param>
         private static void Invoke(InputKind input, InputTriggerType type = default)
         {
-            //すでに登録されているActionがあり、引数の型が一致している場合の処理
-            var isGet = _actionListDictionary.TryGetValue(input, out Dictionary<InputTriggerType, Delegate> typeDic);
-            if (isGet && typeDic[type] is Action action)
+            //Dictionaryが存在しない場合の例外処理
+            if (!_actionListDictionary.TryGetValue(input, out Dictionary<InputTriggerType, Delegate> actionList) ||
+                !actionList.TryGetValue(type, out Delegate del))
+            {
+                Debug.Log($"Action:{input} Type:{type} is null");
+                return;
+            }
+
+            //登録されているDelegateがActionにキャストできる場合の処理。
+            if (del is Action action)
             {
                 action?.Invoke();
             }
-            else if (isGet && typeDic[type] != null)
+            else if (del == null) //delegateが存在しない場合の処理。
             {
-                //引数の型が一致しない場合の処理
-                var list = typeDic[type].GetInvocationList();
-                if (list.Length > 0)
-                {
-                    var paramType = list[0].Method.GetParameters().FirstOrDefault()?.ParameterType;
-                    Debug.Log($"Action<> is not supported." +
-                              $" Supported type: {paramType}");
-                }
+                Debug.Log($"Action:{input} Type:{type} is null");
             }
-            else
+            else //delegateの型が一致していない場合の処理
             {
-                //Actionが登録されていない場合の処理
-                Debug.Log($"{input}Action is null   ");
+                Debug.Log($"Action:{input} Type:{type} is not supported." +
+                          $" Supported type: {del.Method.GetParameters()[0].ParameterType}");
             }
         }
 
         private static void Invoke<T>(InputKind input, InputTriggerType type = default, T value = default)
         {
-            var isGet = _actionListDictionary.TryGetValue(input, out Dictionary<InputTriggerType, Delegate> typeDic);
-            if (isGet && typeDic[type] is Action<T> action)
+            //Dictionaryが存在しない場合の例外処理
+            if (!_actionListDictionary.TryGetValue(input, out Dictionary<InputTriggerType, Delegate> actionList) ||
+                !_actionListDictionary[input].TryGetValue(type, out Delegate del))
+            {
+                Debug.Log($"Action:{input} Type:{type} is null");
+                return;
+            }
+
+            //登録されているDelegateがActionにキャストできる場合の処理。
+            if (del is Action<T> action)
             {
                 action?.Invoke(value);
             }
-            else if (isGet && typeDic[type] != null)
+            else if (del == null) //delegateが存在しない場合の処理。
             {
-                var list = typeDic[type].GetInvocationList();
-                if (list.Length > 0)
-                {
-                    var paramType = list[0].Method.GetParameters().FirstOrDefault()?.ParameterType;
-                    Debug.LogWarning($"Action:{value.GetType()} is not supported." +
-                                     $" Supported type: {paramType}");
-                }
+                Debug.Log($"Action:{input} Type:{type} is null");
             }
-            else
+            else //delegateの型が一致していない場合の処理
             {
-                Debug.Log($"{input}Action is null   ");
+                Debug.Log($"Action:{input} Type:{type} is not supported." +
+                          $" Supported type: {del.Method.GetParameters()[0].ParameterType}");
             }
         }
 
