@@ -9,6 +9,8 @@ namespace SengokuNinjaVillage
         Rigidbody _rb;
         Vector2 _inputVector;
         [SerializeField] float _moveSpeed = 5;
+        [SerializeField] float _jumpPower = 5;
+        [SerializeField] float _fallSpeed = 1;
         private void Start()
         {
             _rb = GetComponent<Rigidbody>();
@@ -17,15 +19,18 @@ namespace SengokuNinjaVillage
         {
             AddAction<Vector2>(InputKind.Move, InputTriggerType.Performed, OnMoveInput);
             AddAction<Vector2>(InputKind.Move, InputTriggerType.Canceled, OnMoveInput);
+            AddAction(InputKind.Jump, InputTriggerType.Started, Jump);
         }
 
         void OnDisable()
         {
             RemoveAction<Vector2>(InputKind.Move, InputTriggerType.Performed, OnMoveInput);
             RemoveAction<Vector2>(InputKind.Move, InputTriggerType.Canceled, OnMoveInput);
+            RemoveAction(InputKind.Jump, InputTriggerType.Started, Jump);
         }
         private void Update()
         {
+            _rb.AddForce(new Vector3(0, -_fallSpeed, 0), ForceMode.Force);
             Move(_inputVector);
         }
 
@@ -47,7 +52,14 @@ namespace SengokuNinjaVillage
             right.Normalize();
 
             var moveVector = forward * input.y + right * input.x;
-            _rb.linearVelocity = moveVector * _moveSpeed;
+            moveVector *= _moveSpeed;
+            moveVector.y = _rb.linearVelocity.y;
+            _rb.linearVelocity = moveVector;
+        }
+        void Jump()
+        {
+            Debug.Log("a");
+            _rb.AddForce(new Vector3(0, _jumpPower, 0), ForceMode.Impulse);
         }
     }
 }
