@@ -51,7 +51,6 @@ namespace SengokuNinjaVillage.Runtime.System
 
         private void OnDestroy()
         {
-            //再生時にOnDestroyが呼ばれて、エラーが出たため一時的にTry Catch
             foreach (var removeData in _registrationAction)
             {
                 switch (removeData.type)
