@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using SengokuNinjaVillage.Runtime.System;
 using SymphonyFrameWork.System;
 using UnityEngine;
@@ -11,24 +12,38 @@ namespace SengokuNinjaVillage.Runtime.System
     {
         private PlayerInput _inputSystem;
 
+        private static readonly Dictionary<string, InputManager.InputKind> InputKind =
+            new()
+            {
+                { "Move", InputManager.InputKind.Move },
+                { "Jump", InputManager.InputKind.Jump },
+                { "Dash", InputManager.InputKind.Dash },
+                { "Crouch", InputManager.InputKind.Crouch },
+                { "Interact", InputManager.InputKind.Interact },
+            };
+
         private void Awake()
         {
             ServiceLocator.SetInstance(this, ServiceLocator.LocateType.Singleton);
         }
-        
+
         private void Start()
         {
             _inputSystem = GetComponent<PlayerInput>();
-            
+
             if (_inputSystem == null)
             {
                 return;
             }
-            _inputSystem.actions["Move"].performed += OnMoving;
-            _inputSystem.actions["Jump"].performed += OnJumping;
-            _inputSystem.actions["Dash"].performed += OnDash;
-            _inputSystem.actions["Crouch"].performed += OnCrouch;
-            _inputSystem.actions["Interact"].performed += OnInteract;
+            
+            BindDefaultActions("Jump");
+            BindDefaultActions("Dash");
+            BindDefaultActions("Crouch");
+            BindDefaultActions("Interact");
+            
+            BindVector2Actions("Move");
+            
+            Debug.Log("Registered Actions");
         }
 
         private void OnDestroy()
@@ -36,11 +51,10 @@ namespace SengokuNinjaVillage.Runtime.System
             //再生時にOnDestroyが呼ばれて、エラーが出たため一時的にTry Catch
             try
             {
-                _inputSystem.actions["Move"].performed -= OnMoving;
+                //_inputSystem.actions["Move"].performed -= OnMoving;
             }
             catch (Exception e)
             {
-
             }
             finally
             {
@@ -48,27 +62,50 @@ namespace SengokuNinjaVillage.Runtime.System
             }
         }
 
-        private void OnMoving(InputAction.CallbackContext contextMenu)
+
+        private void BindDefaultActions(string actionName)
         {
-            var input = contextMenu.ReadValue<Vector2>();
-            InputManager.GetRegisterAction(InputManager.InputKind.Move, input)?.Invoke();
+                _inputSystem.actions[actionName].performed +=
+                    _ =>
+                    {
+                        InputManager.GetRegisterAction(InputKind[actionName], InputManager.InputTriggerType.Performed)?.Invoke();
+                    };
+                _inputSystem.actions[actionName].canceled +=
+                    _ => InputManager.GetRegisterAction(InputKind[actionName], InputManager.InputTriggerType.Canceled)?.Invoke();
+                _inputSystem.actions[actionName].started +=
+                    _ => InputManager.GetRegisterAction(InputKind[actionName], InputManager.InputTriggerType.Started)?.Invoke();
         }
-        private void OnDash(InputAction.CallbackContext contextMenu)
+        private void BindVector2Actions(string actionName)
         {
-            InputManager.GetRegisterAction(InputManager.InputKind.Dash)?.Invoke();
-        }
-        private void OnJumping(InputAction.CallbackContext contextMenu)
-        {
-            InputManager.GetRegisterAction(InputManager.InputKind.Jump)?.Invoke();
-        }
-        private void OnCrouch(InputAction.CallbackContext contextMenu)
-        {
-            InputManager.GetRegisterAction(InputManager.InputKind.Crouch)?.Invoke();
+            try
+            {
+                _inputSystem.actions[actionName].performed +=
+                    x => InputManager.GetRegisterAction(InputKind[actionName], InputManager.InputTriggerType.Performed, x.ReadValue<Vector2>())?.Invoke();
+                _inputSystem.actions[actionName].canceled +=
+                    x => InputManager.GetRegisterAction(InputKind[actionName], InputManager.InputTriggerType.Canceled, x.ReadValue<Vector2>())?.Invoke();
+                _inputSystem.actions[actionName].started +=
+                    x => InputManager.GetRegisterAction(InputKind[actionName], InputManager.InputTriggerType.Started, x.ReadValue<Vector2>())?.Invoke();
+            }
+            catch (Exception e)
+            {
+                Debug.LogError($"{actionName} action could not be executed.");
+                throw;
+            }
         }
 
-        private void OnInteract(InputAction.CallbackContext contextMenu)
+        [ContextMenu("DebugActions")]
+        private void DebugActions()
         {
-            InputManager.GetRegisterAction(InputManager.InputKind.Interact)?.Invoke();
+            Debug.Log("Debug用のAction追加");
+            InputManager.AddAction<Vector2>(InputManager.InputKind.Move, InputManager.InputTriggerType.Performed, x => Debug.Log(x));
+            InputManager.AddAction<Vector2>(InputManager.InputKind.Move, InputManager.InputTriggerType.Canceled, x => Debug.Log(x));
+            InputManager.AddAction<Vector2>(InputManager.InputKind.Move, InputManager.InputTriggerType.Started, x => Debug.Log(x));
+            
+            InputManager.AddAction(InputManager.InputKind.Jump, InputManager.InputTriggerType.Canceled, ()=>Debug.Log("Jump`"));
+            InputManager.AddAction(InputManager.InputKind.Jump, InputManager.InputTriggerType.Started, ()=> Debug.Log("Jump!"));
+            InputManager.AddAction(InputManager.InputKind.Jump, InputManager.InputTriggerType.Performed, () => Debug.Log("Jump?"));
+            
+            _inputSystem.actions["Move"].performed += _ => Debug.Log("Move");
         }
     }
 }
