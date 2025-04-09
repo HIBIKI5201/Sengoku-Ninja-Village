@@ -15,12 +15,14 @@ namespace SengokuNinjaVillage
         }
         void OnEnable()
         {
-            AddAction<Vector2>(InputKind.Move, OnMoveInput);
+            AddAction<Vector2>(InputKind.Move, InputTriggerType.Performed, OnMoveInput);
+            AddAction<Vector2>(InputKind.Move, InputTriggerType.Canceled, OnMoveInput);
         }
 
         void OnDisable()
         {
-            RemoveAction<Vector2>(InputKind.Move, OnMoveInput);
+            RemoveAction<Vector2>(InputKind.Move, InputTriggerType.Performed, OnMoveInput);
+            RemoveAction<Vector2>(InputKind.Move, InputTriggerType.Canceled, OnMoveInput);
         }
         private void Update()
         {
