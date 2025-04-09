@@ -97,55 +97,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1eaec81d70d7bf64194408af479d0686, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _input:
-    m_Name: Input
-    m_Type: 0
-    m_ExpectedControlType: Vector2
-    m_Id: fa541508-a046-469c-9a66-32d8622748b8
-    m_Processors: 
-    m_Interactions: 
-    m_SingletonActionBindings:
-    - m_Name: Keyboard
-      m_Id: d7e093eb-4070-4d9e-b9ef-09004f8b8628
-      m_Path: 2DVector
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Input
-      m_Flags: 4
-    - m_Name: up
-      m_Id: 74bae93b-5c9f-4358-b82d-94105020714d
-      m_Path: <Keyboard>/upArrow
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Input
-      m_Flags: 8
-    - m_Name: down
-      m_Id: b3925319-a057-4888-81dd-4448fde09810
-      m_Path: <Keyboard>/downArrow
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Input
-      m_Flags: 8
-    - m_Name: left
-      m_Id: 3432ec4c-8378-46d2-8ded-47cb339c2e17
-      m_Path: <Keyboard>/leftArrow
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Input
-      m_Flags: 8
-    - m_Name: right
-      m_Id: d98ef62f-c28c-44f0-a3f1-fafdd4cb49bd
-      m_Path: <Keyboard>/rightArrow
-      m_Interactions: 
-      m_Processors: 
-      m_Groups: 
-      m_Action: Input
-      m_Flags: 8
-    m_Flags: 0
+  _moveSpeed: 5
+  _jumpPower: 5
+  _fallSpeed: 3
 --- !u!1 &5605498940109191475
 GameObject:
   m_ObjectHideFlags: 0
