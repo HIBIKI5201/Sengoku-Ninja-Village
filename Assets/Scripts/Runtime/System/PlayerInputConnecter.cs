@@ -1,6 +1,5 @@
 using System;
 using System.Collections.Generic;
-using SengokuNinjaVillage.Runtime.System;
 using SymphonyFrameWork.System;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -39,8 +38,6 @@ namespace SengokuNinjaVillage.Runtime.System
                 return;
             }
 
-            //_inputSystem.actions.Dip
-
             BindDefaultActions("Jump");
             BindDefaultActions("Dash");
             BindDefaultActions("Crouch");
@@ -61,16 +58,21 @@ namespace SengokuNinjaVillage.Runtime.System
                     case InputManager.InputTriggerType.Performed:
                         _inputSystem.actions[removeData.name].performed -= removeData.action;
                         break;
-                    default:
+                    case InputManager.InputTriggerType.Started: 
                         _inputSystem.actions[removeData.name].started -= removeData.action;
                         break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
                 }
             }
 
             ServiceLocator.DestroyInstance<PlayerInputConecter>();
         }
 
-
+        /// <summary>
+        /// 引数が不要なActionの登録メソッド
+        /// </summary>
+        /// <param name="actionName"></param>
         private void BindDefaultActions(string actionName)
         {
             //一時的にActionを変数に格納
@@ -91,6 +93,10 @@ namespace SengokuNinjaVillage.Runtime.System
             _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Started));
         }
 
+        /// <summary>
+        /// Vector2のAction登録用メソッド
+        /// </summary>
+        /// <param name="actionName"></param>
         private void BindVector2Actions(string actionName)
         {
             Action<InputAction.CallbackContext> action = x => InputManager.GetRegisterAction(InputKind[actionName],
@@ -112,6 +118,9 @@ namespace SengokuNinjaVillage.Runtime.System
             _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Started));
         }
 
+        /// <summary>
+        /// デバッグ用のAction inspectorから追加可能
+        /// </summary>
         [ContextMenu("DebugActions")]
         private void DebugActions()
         {
