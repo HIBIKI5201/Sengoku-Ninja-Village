@@ -17,6 +17,9 @@ namespace SengokuNinjaVillage.Runtime.System
         
         public override async Task SceneAwake()
         {
+            //locator登録
+            ServiceLocator.SetInstance(this, ServiceLocator.LocateType.Singleton);
+            
             //コンフィグをロード
             var request = Resources.LoadAsync<BootConfig>(BootStrap.ConfigPath);
             await request;
