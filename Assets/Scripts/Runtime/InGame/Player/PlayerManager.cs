@@ -56,7 +56,7 @@ namespace SengokuNinjaVillage
             right.Normalize();
 
             var moveVector = forward * input.y + right * input.x;
-            moveVector *= _moveSpeed;
+            moveVector *= _isCrouched ? _moveSpeed * 0.2f : _moveSpeed;
             moveVector.y = _rb.linearVelocity.y;
             _rb.linearVelocity = moveVector;
         }
