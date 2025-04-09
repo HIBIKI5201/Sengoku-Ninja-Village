@@ -47,8 +47,6 @@ namespace SengokuNinjaVillage.Runtime.System
             BindDefaultActions("Interact");
 
             BindVector2Actions("Move");
-
-            Debug.Log("Registered Actions");
         }
 
         private void OnDestroy()
