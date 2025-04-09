@@ -42,8 +42,6 @@ namespace SengokuNinjaVillage
 
         void OnMoveInput(Vector2 input)
         {
-            Debug.Log($"input : {input}");
-
             _inputVector = input;
         }
 
@@ -64,10 +62,8 @@ namespace SengokuNinjaVillage
         }
         void Jump()
         {
-            Debug.Log("a");
             if (Physics.Raycast(_underfoot.position, Vector3.down, 0.1f, _groundLayer))
             {
-                Debug.Log("aaaa");
                 _rb.AddForce(new Vector3(0, _jumpPower, 0), ForceMode.Impulse);
             }
         }
