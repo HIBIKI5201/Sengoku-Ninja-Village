@@ -93,31 +93,23 @@ namespace SengokuNinjaVillage.Runtime.System
 
         private void BindVector2Actions(string actionName)
         {
-            try
-            {
-                Action<InputAction.CallbackContext> action = x => InputManager.GetRegisterAction(InputKind[actionName],
-                    InputManager.InputTriggerType.Performed,
-                    x.ReadValue<Vector2>())?.Invoke();
-                _inputSystem.actions[actionName].performed += action;
-                _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Performed));
+            Action<InputAction.CallbackContext> action = x => InputManager.GetRegisterAction(InputKind[actionName],
+                InputManager.InputTriggerType.Performed,
+                x.ReadValue<Vector2>())?.Invoke();
+            _inputSystem.actions[actionName].performed += action;
+            _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Performed));
 
-                action = x => InputManager.GetRegisterAction(InputKind[actionName],
-                    InputManager.InputTriggerType.Canceled,
-                    x.ReadValue<Vector2>())?.Invoke();
-                _inputSystem.actions[actionName].canceled += action;
-                _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Canceled));
+            action = x => InputManager.GetRegisterAction(InputKind[actionName],
+                InputManager.InputTriggerType.Canceled,
+                x.ReadValue<Vector2>())?.Invoke();
+            _inputSystem.actions[actionName].canceled += action;
+            _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Canceled));
 
-                action = x => InputManager.GetRegisterAction(InputKind[actionName],
-                    InputManager.InputTriggerType.Started,
-                    x.ReadValue<Vector2>())?.Invoke();
-                _inputSystem.actions[actionName].started += action;
-                _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Started));
-            }
-            catch (Exception e)
-            {
-                Debug.LogError($"{actionName} action could not be executed.");
-                throw;
-            }
+            action = x => InputManager.GetRegisterAction(InputKind[actionName],
+                InputManager.InputTriggerType.Started,
+                x.ReadValue<Vector2>())?.Invoke();
+            _inputSystem.actions[actionName].started += action;
+            _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Started));
         }
 
         [ContextMenu("DebugActions")]
