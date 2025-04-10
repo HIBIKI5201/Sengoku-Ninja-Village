@@ -8,13 +8,25 @@ namespace SengokuNinjaVillage
     {
         Rigidbody _rb;
         Vector2 _inputVector;
-        [SerializeField] float _moveSpeed = 5;
-        [SerializeField] float _jumpPower = 5;
-        [SerializeField] float _fallSpeed = 1;
+        [SerializeField, Header("移動速度")] float _moveSpeed = 5;
+        [SerializeField, Header("ジャンプ力")] float _jumpPower = 5;
+        [SerializeField, Header("落下速度")] float _fallSpeed = 1;
+        [SerializeField, Header("ローリング回避する距離")] float _rollingDistance = 1;
+        [SerializeField, Header("ローリング回避する時間")] float _rollingTime = 0.5f;
         [SerializeField] Transform _underfoot;
         [SerializeField] LayerMask _groundLayer;
         [SerializeField] CapsuleCollider _collider;
+
+        float _rollingTimer;
+
         bool _isCrouched;
+        bool _isDash;
+        bool _isRolling;
+
+        Vector3 _moveDir;
+        Vector3 _startPos;
+        Vector3 _targetPos;
+
         private void Start()
         {
             _rb = GetComponent<Rigidbody>();
@@ -25,6 +37,8 @@ namespace SengokuNinjaVillage
             AddAction<Vector2>(InputKind.Move, InputTriggerType.Canceled, OnMoveInput);
             AddAction(InputKind.Jump, InputTriggerType.Started, Jump);
             AddAction(InputKind.Crouch, InputTriggerType.Started, Crouch);
+            AddAction(InputKind.Dash, InputTriggerType.Started, Dash);
+            AddAction(InputKind.Dash, InputTriggerType.Canceled, Dash);
         }
 
         void OnDisable()
@@ -33,11 +47,32 @@ namespace SengokuNinjaVillage
             RemoveAction<Vector2>(InputKind.Move, InputTriggerType.Canceled, OnMoveInput);
             RemoveAction(InputKind.Jump, InputTriggerType.Started, Jump);
             RemoveAction(InputKind.Crouch, InputTriggerType.Started, Crouch);
+            RemoveAction(InputKind.Dash, InputTriggerType.Started, Dash);
+            RemoveAction(InputKind.Dash, InputTriggerType.Canceled, Dash);
         }
         private void Update()
         {
             _rb.AddForce(new Vector3(0, -_fallSpeed, 0), ForceMode.Force);
-            Move(_inputVector);
+
+            if (!_isRolling)
+            {
+                Move(_inputVector);
+            }
+
+            else if (_isRolling)
+            {
+                _rollingTimer += Time.deltaTime;
+
+                float t = Mathf.Clamp01(_rollingTimer / _rollingTime);
+                transform.position = Vector3.Lerp(_startPos, _targetPos, t);
+                Debug.Log(t);
+                if (t >= 1)
+                {
+                    _isRolling = false;
+                    ColliderSizeChange(2);
+                }
+            }
+
         }
 
         void OnMoveInput(Vector2 input)
@@ -55,8 +90,8 @@ namespace SengokuNinjaVillage
             forward.Normalize();
             right.Normalize();
 
-            var moveVector = forward * input.y + right * input.x;
-            moveVector *= _isCrouched ? _moveSpeed * 0.2f : _moveSpeed;
+            _moveDir = forward * input.y + right * input.x;
+            var moveVector = _moveDir * (_isCrouched ? _moveSpeed * 0.2f : _moveSpeed);
             moveVector.y = _rb.linearVelocity.y;
             _rb.linearVelocity = moveVector;
         }
@@ -73,15 +108,31 @@ namespace SengokuNinjaVillage
             var center = _collider.center;
             if (_isCrouched)
             {
-                center.y /= 2;
-                _collider.center = center;
-                _collider.height /= 2;
+                ColliderSizeChange(0.5f);
                 return;
             }
-            center = _collider.center;
-            center.y *= 2;
+            ColliderSizeChange(2);
+        }
+        void Dash()
+        {
+            _isDash = !_isDash;
+
+            if (!_isRolling)
+            {
+                ColliderSizeChange(0.5f);
+                _isRolling = true;
+                _rollingTimer = 0;
+                _startPos = transform.position;
+                _targetPos = transform.position + _moveDir * _rollingDistance;
+            }
+        }
+
+        void ColliderSizeChange(float value)
+        {
+            var center = _collider.center;
+            center.y *= value;
             _collider.center = center;
-            _collider.height *= 2;
+            _collider.height *= value;
         }
     }
 }
