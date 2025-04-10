@@ -94,7 +94,7 @@ namespace SengokuNinjaVillage.Runtime.System
 
             foreach (var chunk in _chunkDataList.Chunks)
             {
-                _chunks.Add(chunk.ChunkPos, new ChunkDirector(chunk.SceneName, chunk.SceneKind));
+                _chunks.Add(chunk.ChunkPos, new ChunkDirector(chunk.SceneKind));
             }
         }
 
@@ -150,40 +150,30 @@ namespace SengokuNinjaVillage.Runtime.System
 
     public class ChunkDirector
     {
-        private Scene _scene;
-        private string _sceneName;
+        
         private SceneListEnum _sceneKind;
         private bool _isLoaded;
 
-        public Scene Scene => _scene;
 
         public bool IsLoaded
         {
             get => _isLoaded;
             set => _isLoaded = value;
         }
-
-        public string SceneName => _sceneName;
         public SceneListEnum Kind => _sceneKind;
 
-        public ChunkDirector()
+        public ChunkDirector(SceneListEnum sceneKind = SceneListEnum.None)
         {
-            return;
-        }
-
-        public ChunkDirector(string sceneName = null, SceneListEnum sceneKind = SceneListEnum.None)
-        {
-            _sceneName = sceneName;
             _sceneKind = sceneKind;
         }
 
-        public async Task LoadChunk()
+        public virtual async Task LoadChunk()
         {
             await SceneLoader.LoadScene(_sceneKind.ToString());
             _isLoaded = true;
         }
 
-        public async Task UnLoadChunk()
+        public virtual async Task UnLoadChunk()
         {
             await SceneLoader.UnloadScene(_sceneKind.ToString());
             _isLoaded = false;

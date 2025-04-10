@@ -15,11 +15,9 @@ namespace SengokuNinjaVillage.Runtime.System
     public class ChunkData
     {
         [SerializeField] private Vector2 _chunkPos;
-        [SerializeField] private string _scene;
         [SerializeField] private SceneListEnum _sceneKind;
         
         public Vector2 ChunkPos => _chunkPos;
-        public string SceneName => _scene;
         public SceneListEnum SceneKind => _sceneKind;
     }
 }
