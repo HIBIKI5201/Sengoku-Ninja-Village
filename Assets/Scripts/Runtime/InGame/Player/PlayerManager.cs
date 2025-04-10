@@ -123,7 +123,7 @@ namespace SengokuNinjaVillage
                 _isRolling = true;
                 _rollingTimer = 0;
                 _startPos = transform.position;
-                _targetPos = transform.position + _moveDir * _rollingDistance;
+                _targetPos = transform.position + (_moveDir == Vector3.zero ? transform.forward : _moveDir) * _rollingDistance;
             }
         }
 
