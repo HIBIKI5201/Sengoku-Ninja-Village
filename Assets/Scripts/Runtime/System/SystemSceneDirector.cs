@@ -83,8 +83,11 @@ namespace SengokuNinjaVillage.Runtime.System
 
             if (!director)
             {
+                Debug.Log(director is null);
                 return;
             }
+
+            await director.SceneAwake();
             
             //必要なシーンをロード
             for (int i = 0; i < director.RequiredScenes.Length; i++)
