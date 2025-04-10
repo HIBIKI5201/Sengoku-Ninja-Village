@@ -37,8 +37,8 @@ namespace SengokuNinjaVillage
             AddAction<Vector2>(InputKind.Move, InputTriggerType.Canceled, OnMoveInput);
             AddAction(InputKind.Jump, InputTriggerType.Started, Jump);
             AddAction(InputKind.Crouch, InputTriggerType.Started, Crouch);
-            AddAction(InputKind.Dash, InputTriggerType.Started, Dash);
-            AddAction(InputKind.Dash, InputTriggerType.Canceled, Dash);
+            AddAction(InputKind.Dash, InputTriggerType.Started, Rolling);
+            AddAction(InputKind.Dash, InputTriggerType.Canceled, DashEnd);
         }
 
         void OnDisable()
@@ -47,8 +47,8 @@ namespace SengokuNinjaVillage
             RemoveAction<Vector2>(InputKind.Move, InputTriggerType.Canceled, OnMoveInput);
             RemoveAction(InputKind.Jump, InputTriggerType.Started, Jump);
             RemoveAction(InputKind.Crouch, InputTriggerType.Started, Crouch);
-            RemoveAction(InputKind.Dash, InputTriggerType.Started, Dash);
-            RemoveAction(InputKind.Dash, InputTriggerType.Canceled, Dash);
+            RemoveAction(InputKind.Dash, InputTriggerType.Started, Rolling);
+            RemoveAction(InputKind.Dash, InputTriggerType.Canceled, DashEnd);
         }
         private void Update()
         {
@@ -91,7 +91,7 @@ namespace SengokuNinjaVillage
             right.Normalize();
 
             _moveDir = forward * input.y + right * input.x;
-            var moveVector = _moveDir * (_isCrouched ? _moveSpeed * 0.2f : _moveSpeed);
+            var moveVector = _moveDir * (_isDash ? _moveSpeed * 1.5f : _isCrouched ? _moveSpeed * 0.2f : _moveSpeed);
             moveVector.y = _rb.linearVelocity.y;
             _rb.linearVelocity = moveVector;
         }
@@ -113,10 +113,9 @@ namespace SengokuNinjaVillage
             }
             ColliderSizeChange(2);
         }
-        void Dash()
+        void Rolling()
         {
-            _isDash = !_isDash;
-
+            _isDash = true;
             if (!_isRolling)
             {
                 ColliderSizeChange(0.5f);
@@ -126,7 +125,10 @@ namespace SengokuNinjaVillage
                 _targetPos = transform.position + (_moveDir == Vector3.zero ? transform.forward : _moveDir) * _rollingDistance;
             }
         }
-
+        void DashEnd()
+        {
+            _isDash = false;
+        }
         void ColliderSizeChange(float value)
         {
             _collider.center *= value;
