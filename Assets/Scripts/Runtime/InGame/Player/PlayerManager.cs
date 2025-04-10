@@ -129,9 +129,7 @@ namespace SengokuNinjaVillage
 
         void ColliderSizeChange(float value)
         {
-            var center = _collider.center;
-            center.y *= value;
-            _collider.center = center;
+            _collider.center *= value;
             _collider.height *= value;
         }
     }
