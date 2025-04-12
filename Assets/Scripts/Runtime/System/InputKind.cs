@@ -10,6 +10,12 @@ namespace SengokuNinjaVillage.Runtime.System
         Jump = 2,
         Crouch = 3,
         Dash = 4,
-        Interact = 5
+        Interact = 5,
+        Look = 6,
+        
+        Button1 = 1,
+        Button2 = 2,
+        Button3 = 3,
+        
     }
 }
