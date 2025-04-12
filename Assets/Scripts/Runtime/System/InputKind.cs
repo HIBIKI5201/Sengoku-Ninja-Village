@@ -13,9 +13,9 @@ namespace SengokuNinjaVillage.Runtime.System
         Interact = 5,
         Look = 6,
         
-        Button1 = 1,
-        Button2 = 2,
-        Button3 = 3,
+        Button1 = 7,
+        Button2 = 8,
+        Button3 = 9,
         
     }
 }
