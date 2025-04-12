@@ -251,16 +251,6 @@ namespace SengokuNinjaVillage.Runtime.System
             _actionListDictionary.Clear();
         }
 
-        public enum InputKind
-        {
-            None = 0,
-            Move = 1,
-            Jump = 2,
-            Crouch = 3,
-            Dash = 4,
-            Interact = 5
-        }
-
         public enum InputTriggerType
         {
             Performed,

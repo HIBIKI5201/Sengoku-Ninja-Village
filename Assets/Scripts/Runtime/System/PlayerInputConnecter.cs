@@ -14,14 +14,14 @@ namespace SengokuNinjaVillage.Runtime.System
         private List<(Action<InputAction.CallbackContext> action, string name, InputManager.InputTriggerType type)>
             _registrationAction = new();
 
-        private static readonly Dictionary<string, InputManager.InputKind> InputKind =
+        private static readonly Dictionary<string, InputKind> InputDictionary =
             new()
             {
-                { "Move", InputManager.InputKind.Move },
-                { "Jump", InputManager.InputKind.Jump },
-                { "Dash", InputManager.InputKind.Dash },
-                { "Crouch", InputManager.InputKind.Crouch },
-                { "Interact", InputManager.InputKind.Interact },
+                { "Move", InputKind.Move },
+                { "Jump", InputKind.Jump },
+                { "Dash", InputKind.Dash },
+                { "Crouch", InputKind.Crouch },
+                { "Interact", InputKind.Interact },
             };
 
         private void Awake()
@@ -77,18 +77,18 @@ namespace SengokuNinjaVillage.Runtime.System
         {
             //一時的にActionを変数に格納
             Action<InputAction.CallbackContext> action = _ =>
-                InputManager.GetRegisterAction(InputKind[actionName], InputManager.InputTriggerType.Performed)
+                InputManager.GetRegisterAction(InputDictionary[actionName], InputManager.InputTriggerType.Performed)
                     ?.Invoke();
             _inputSystem.actions[actionName].performed += action;
             _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Performed)); //ListにAction登録
 
             action = _ =>
-                InputManager.GetRegisterAction(InputKind[actionName], InputManager.InputTriggerType.Canceled)?.Invoke();
+                InputManager.GetRegisterAction(InputDictionary[actionName], InputManager.InputTriggerType.Canceled)?.Invoke();
             _inputSystem.actions[actionName].canceled += action;
             _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Canceled));
 
             action = _ =>
-                InputManager.GetRegisterAction(InputKind[actionName], InputManager.InputTriggerType.Started)?.Invoke();
+                InputManager.GetRegisterAction(InputDictionary[actionName], InputManager.InputTriggerType.Started)?.Invoke();
             _inputSystem.actions[actionName].started += action;
             _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Started));
         }
@@ -99,19 +99,19 @@ namespace SengokuNinjaVillage.Runtime.System
         /// <param name="actionName"></param>
         private void BindVector2Actions(string actionName)
         {
-            Action<InputAction.CallbackContext> action = x => InputManager.GetRegisterAction(InputKind[actionName],
+            Action<InputAction.CallbackContext> action = x => InputManager.GetRegisterAction(InputDictionary[actionName],
                 InputManager.InputTriggerType.Performed,
                 x.ReadValue<Vector2>())?.Invoke();
             _inputSystem.actions[actionName].performed += action;
             _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Performed));
 
-            action = x => InputManager.GetRegisterAction(InputKind[actionName],
+            action = x => InputManager.GetRegisterAction(InputDictionary[actionName],
                 InputManager.InputTriggerType.Canceled,
                 x.ReadValue<Vector2>())?.Invoke();
             _inputSystem.actions[actionName].canceled += action;
             _registrationAction.Add((action, actionName, InputManager.InputTriggerType.Canceled));
 
-            action = x => InputManager.GetRegisterAction(InputKind[actionName],
+            action = x => InputManager.GetRegisterAction(InputDictionary[actionName],
                 InputManager.InputTriggerType.Started,
                 x.ReadValue<Vector2>())?.Invoke();
             _inputSystem.actions[actionName].started += action;
@@ -125,18 +125,18 @@ namespace SengokuNinjaVillage.Runtime.System
         private void DebugActions()
         {
             Debug.Log("Debug用のAction追加");
-            InputManager.AddAction<Vector2>(InputManager.InputKind.Move, InputManager.InputTriggerType.Performed,
+            InputManager.AddAction<Vector2>(InputKind.Move, InputManager.InputTriggerType.Performed,
                 x => Debug.Log(x));
-            InputManager.AddAction<Vector2>(InputManager.InputKind.Move, InputManager.InputTriggerType.Canceled,
+            InputManager.AddAction<Vector2>(InputKind.Move, InputManager.InputTriggerType.Canceled,
                 x => Debug.Log(x));
-            InputManager.AddAction<Vector2>(InputManager.InputKind.Move, InputManager.InputTriggerType.Started,
+            InputManager.AddAction<Vector2>(InputKind.Move, InputManager.InputTriggerType.Started,
                 x => Debug.Log(x));
 
-            InputManager.AddAction(InputManager.InputKind.Jump, InputManager.InputTriggerType.Canceled,
+            InputManager.AddAction(InputKind.Jump, InputManager.InputTriggerType.Canceled,
                 () => Debug.Log("Jump`"));
-            InputManager.AddAction(InputManager.InputKind.Jump, InputManager.InputTriggerType.Started,
+            InputManager.AddAction(InputKind.Jump, InputManager.InputTriggerType.Started,
                 () => Debug.Log("Jump!"));
-            InputManager.AddAction(InputManager.InputKind.Jump, InputManager.InputTriggerType.Performed,
+            InputManager.AddAction(InputKind.Jump, InputManager.InputTriggerType.Performed,
                 () => Debug.Log("Jump?"));
 
             _inputSystem.actions["Move"].performed += _ => Debug.Log("Move");
