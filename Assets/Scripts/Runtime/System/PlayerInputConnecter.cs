@@ -22,6 +22,10 @@ namespace SengokuNinjaVillage.Runtime.System
                 { "Dash", InputKind.Dash },
                 { "Crouch", InputKind.Crouch },
                 { "Interact", InputKind.Interact },
+                {"Look", InputKind.Look },
+                {"Button1", InputKind.Button1 },
+                {"Button2", InputKind.Button2 },
+                {"Button3", InputKind.Button3 },
             };
 
         private void Awake()
@@ -44,6 +48,7 @@ namespace SengokuNinjaVillage.Runtime.System
             BindDefaultActions("Interact");
 
             BindVector2Actions("Move");
+            BindVector2Actions("Look");
         }
 
         private void OnDestroy()
@@ -138,6 +143,9 @@ namespace SengokuNinjaVillage.Runtime.System
                 () => Debug.Log("Jump!"));
             InputManager.AddAction(InputKind.Jump, InputManager.InputTriggerType.Performed,
                 () => Debug.Log("Jump?"));
+            
+            InputManager.AddAction<Vector2>(InputKind.Look, InputManager.InputTriggerType.Performed,
+                x => Debug.Log(x));
 
             _inputSystem.actions["Move"].performed += _ => Debug.Log("Move");
         }
