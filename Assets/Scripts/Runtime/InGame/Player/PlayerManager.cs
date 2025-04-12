@@ -52,6 +52,10 @@ namespace SengokuNinjaVillage
         }
         private void Update()
         {
+            var camForward = Camera.main.transform.forward;
+            camForward.y = 0;
+            transform.forward = camForward;
+
             _rb.AddForce(new Vector3(0, -_fallSpeed, 0), ForceMode.Force);
 
             if (!_isRolling)
