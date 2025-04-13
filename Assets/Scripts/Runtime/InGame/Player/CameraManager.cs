@@ -18,8 +18,8 @@ namespace SengokuNinjaVillage.Runtime.InGame
         [SerializeField] Transform _player;
         [SerializeField] CinemachineThirdPersonFollow _vcam;
 
-        float _defaultDistance;
-        float _baseOffsetX;
+        //float _defaultDistance;
+        //float _baseOffsetX;
         private void OnEnable()
         {
             AddAction<Vector2>(InputKind.Look, InputTriggerType.Performed, OnRotateInput);
@@ -32,8 +32,8 @@ namespace SengokuNinjaVillage.Runtime.InGame
         }
         private void Start()
         {
-            _defaultDistance = _cameraDistance;
-            _baseOffsetX = _vcam.ShoulderOffset.x;
+            //_defaultDistance = _cameraDistance;
+            //_baseOffsetX = _vcam.ShoulderOffset.x;
             SetDistance(_cameraDistance);
         }
         void Update()
@@ -66,9 +66,9 @@ namespace SengokuNinjaVillage.Runtime.InGame
         {
             _vcam.CameraDistance = dis;
 
-            var scale = _vcam.CameraDistance / _defaultDistance;
+            //var scale = _vcam.CameraDistance / _defaultDistance;
 
-            _vcam.ShoulderOffset = new Vector3(_baseOffsetX * scale, _vcam.ShoulderOffset.y, _vcam.ShoulderOffset.z);
+            //_vcam.ShoulderOffset = new Vector3(_baseOffsetX * scale, _vcam.ShoulderOffset.y, _vcam.ShoulderOffset.z);
         }
     }
 }
