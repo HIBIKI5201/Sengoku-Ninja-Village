@@ -15,7 +15,8 @@ namespace SengokuNinjaVillage
         [SerializeField, Header("落下速度")] float _fallSpeed = 1;
         [SerializeField, Header("ローリング回避する距離")] float _rollingDistance = 1;
         [SerializeField, Header("ローリング回避する時間")] float _rollingTime = 0.5f;
-        [SerializeField, Header("カメラの回転速度")] float _rotationSpeed;
+        [SerializeField, Header("カメラの回転速度"), Range(0.1f, 1)] float _rotationSpeed;
+        [SerializeField, Header("カメラの回転できる限界点")] float _rotationClamp = 30;
         [SerializeField] Transform _underfoot;
         [SerializeField] Transform _eye;
         [SerializeField] LayerMask _groundLayer;
@@ -149,8 +150,17 @@ namespace SengokuNinjaVillage
             float inputX = input.x;
             float inputY = input.y;
 
-            transform.Rotate(0, inputX * _rotationSpeed * Time.deltaTime, 0);
+            transform.Rotate(0, inputX * _rotationSpeed, 0);
 
+            var eyeEuler = _eye.localEulerAngles;
+
+            var currentX = eyeEuler.x > 180 ? eyeEuler.x - 360 : eyeEuler.x;
+
+            var newX = currentX + inputY * _rotationSpeed;
+
+            newX = Mathf.Clamp(newX, -_rotationClamp, _rotationClamp);
+
+            _eye.localEulerAngles = new Vector3(newX, eyeEuler.y, eyeEuler.z);
         }
         void ColliderSizeChange(float value)
         {
