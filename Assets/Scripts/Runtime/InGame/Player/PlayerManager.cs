@@ -1,6 +1,5 @@
 ﻿using SengokuNinjaVillage.Runtime.System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 using static SengokuNinjaVillage.Runtime.System.InputManager;
 
 namespace SengokuNinjaVillage
