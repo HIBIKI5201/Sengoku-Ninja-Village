@@ -1,4 +1,6 @@
-﻿using UnityEngine;
+﻿using SengokuNinjaVillage.Runtime.System;
+using UnityEngine;
+using UnityEngine.InputSystem;
 using static SengokuNinjaVillage.Runtime.System.InputManager;
 
 namespace SengokuNinjaVillage
@@ -7,13 +9,16 @@ namespace SengokuNinjaVillage
     public class PlayerManager : MonoBehaviour
     {
         Rigidbody _rb;
-        Vector2 _inputVector;
+        Vector2 _inputMoveVector;
+        Vector2 _inputRotateVector;
         [SerializeField, Header("移動速度")] float _moveSpeed = 5;
         [SerializeField, Header("ジャンプ力")] float _jumpPower = 5;
         [SerializeField, Header("落下速度")] float _fallSpeed = 1;
         [SerializeField, Header("ローリング回避する距離")] float _rollingDistance = 1;
         [SerializeField, Header("ローリング回避する時間")] float _rollingTime = 0.5f;
+        [SerializeField, Header("カメラの回転速度")] float _rotationSpeed;
         [SerializeField] Transform _underfoot;
+        [SerializeField] Transform _eye;
         [SerializeField] LayerMask _groundLayer;
         [SerializeField] CapsuleCollider _collider;
 
@@ -35,6 +40,8 @@ namespace SengokuNinjaVillage
         {
             AddAction<Vector2>(InputKind.Move, InputTriggerType.Performed, OnMoveInput);
             AddAction<Vector2>(InputKind.Move, InputTriggerType.Canceled, OnMoveInput);
+            AddAction<Vector2>(InputKind.Look, InputTriggerType.Performed, OnRotateInput);
+            AddAction<Vector2>(InputKind.Look, InputTriggerType.Canceled, OnRotateInput);
             AddAction(InputKind.Jump, InputTriggerType.Started, Jump);
             AddAction(InputKind.Crouch, InputTriggerType.Started, Crouch);
             AddAction(InputKind.Dash, InputTriggerType.Started, Rolling);
@@ -45,6 +52,8 @@ namespace SengokuNinjaVillage
         {
             RemoveAction<Vector2>(InputKind.Move, InputTriggerType.Performed, OnMoveInput);
             RemoveAction<Vector2>(InputKind.Move, InputTriggerType.Canceled, OnMoveInput);
+            RemoveAction<Vector2>(InputKind.Look, InputTriggerType.Performed, OnRotateInput);
+            RemoveAction<Vector2>(InputKind.Look, InputTriggerType.Canceled, OnRotateInput);
             RemoveAction(InputKind.Jump, InputTriggerType.Started, Jump);
             RemoveAction(InputKind.Crouch, InputTriggerType.Started, Crouch);
             RemoveAction(InputKind.Dash, InputTriggerType.Started, Rolling);
@@ -52,15 +61,13 @@ namespace SengokuNinjaVillage
         }
         private void Update()
         {
-            var camForward = Camera.main.transform.forward;
-            camForward.y = 0;
-            transform.forward = camForward;
+            Rotation(_inputRotateVector);
 
             _rb.AddForce(new Vector3(0, -_fallSpeed, 0), ForceMode.Force);
 
             if (!_isRolling)
             {
-                Move(_inputVector);
+                Move(_inputMoveVector);
             }
 
             else if (_isRolling)
@@ -81,7 +88,7 @@ namespace SengokuNinjaVillage
 
         void OnMoveInput(Vector2 input)
         {
-            _inputVector = input;
+            _inputMoveVector = input;
         }
 
         void Move(Vector2 input)
@@ -132,6 +139,19 @@ namespace SengokuNinjaVillage
         void DashEnd()
         {
             _isDash = false;
+        }
+
+        void OnRotateInput(Vector2 input)
+        {
+            _inputRotateVector = input;
+        }
+        void Rotation(Vector2 input)
+        {
+            float inputX = input.x;
+            float inputY = input.y;
+
+            transform.Rotate(0, inputX * _rotationSpeed * Time.deltaTime, 0);
+
         }
         void ColliderSizeChange(float value)
         {
