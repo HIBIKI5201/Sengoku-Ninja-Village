@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using SengokuNinjaVillage.Runtime.System;
+using UnityEngine;
 using static SengokuNinjaVillage.Runtime.System.InputManager;
 
 namespace SengokuNinjaVillage
@@ -7,7 +8,7 @@ namespace SengokuNinjaVillage
     public class PlayerManager : MonoBehaviour
     {
         Rigidbody _rb;
-        Vector2 _inputVector;
+        Vector2 _inputMoveVector;
         [SerializeField, Header("移動速度")] float _moveSpeed = 5;
         [SerializeField, Header("ジャンプ力")] float _jumpPower = 5;
         [SerializeField, Header("落下速度")] float _fallSpeed = 1;
@@ -56,7 +57,7 @@ namespace SengokuNinjaVillage
 
             if (!_isRolling)
             {
-                Move(_inputVector);
+                Move(_inputMoveVector);
             }
 
             else if (_isRolling)
@@ -77,7 +78,7 @@ namespace SengokuNinjaVillage
 
         void OnMoveInput(Vector2 input)
         {
-            _inputVector = input;
+            _inputMoveVector = input;
         }
 
         void Move(Vector2 input)
@@ -129,6 +130,7 @@ namespace SengokuNinjaVillage
         {
             _isDash = false;
         }
+
         void ColliderSizeChange(float value)
         {
             _collider.center *= value;
