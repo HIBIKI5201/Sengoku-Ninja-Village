@@ -3,7 +3,8 @@
     "rootNamespace": "SengokuNinjaVillage.Runtime.InGame",
     "references": [
         "GUID:49906e3a45f1f2542a6b385ab751d679",
-        "GUID:246abdc565b0c0e4d87ad0b306083639"
+        "GUID:246abdc565b0c0e4d87ad0b306083639",
+        "GUID:4307f53044263cf4b835bd812fc161a4"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],
